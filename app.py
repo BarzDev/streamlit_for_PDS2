@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 
 # ========================
-# LOAD MODEL (optional)
+# LOAD MODEL
 # ========================
 model = joblib.load("model/rf_model.pkl")
 scaler = joblib.load("model/scaler.pkl")   
@@ -57,29 +57,29 @@ target_label_map = {
 # ========================
 # UI
 # ========================
-st.title("🎓 Student Status Prediction")
-st.write("Input data mahasiswa untuk prediksi status")
+st.title("🎓Jaya-Jaya Institute Student Status Prediction")
+st.write("Enter student data to predict status")
 
 # ========================
 # INPUT FORM
 # ========================
 
-st.subheader("📊 Akademik")
+st.subheader("📊 Academic")
 cu_2nd_approved = st.number_input("2nd Sem Approved", 0, 30)
 cu_2nd_grade = st.number_input("2nd Sem Grade", 0.0, 20.0)
 cu_1st_approved = st.number_input("1st Sem Approved", 0, 30)
 cu_1st_grade = st.number_input("1st Sem Grade", 0.0, 20.0)
 
-st.subheader("💰 Finansial")
+st.subheader("💰 Financial")
 tuition = st.selectbox("Tuition Up To Date", list(binary_map.values()))
 scholarship = st.selectbox("Scholarship", list(binary_map.values()))
 debtor = st.selectbox("Debtor", list(binary_map.values()))
 
-st.subheader("👤 Demografi")
+st.subheader("👤 Demographics")
 age = st.number_input("Age", 15, 70)
 gender = st.selectbox("Gender", list(gender_map.values()))
 
-st.subheader("📚 Aktivitas")
+st.subheader("📚 Activities")
 cu_2nd_enrolled = st.number_input("2nd Sem Enrolled", 0, 30)
 cu_1st_enrolled = st.number_input("1st Sem Enrolled", 0, 30)
 
@@ -125,10 +125,6 @@ df_scaled = scaler.transform(df_input)
 # ========================
 if st.button("🔮 Predict"):
     
-    # st.write("### 📥 Input Data")
-    # st.dataframe(df_input)
-
-
     pred = model.predict(df_scaled)[0]
     result = target_label_map[pred]
 
@@ -139,14 +135,14 @@ if st.button("🔮 Predict"):
     else: 
         color = "green"
 
-    st.markdown(f"<h3 style='color:{color}'>🎯 Predict Status: {result}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:{color}'>🎯 Predict Result: {result}</h3>", unsafe_allow_html=True)
 
 
 st.markdown(
     """
     <hr>
-    <p style='text-align:center; color:gray; font-size:12px;'>
-        © 2026 Fakhrul_Akbar | Submission Dicoding
+    <p style='text-align:center; color:gray; font-size:16px;'>
+        © 2026 Fakhrul_Akbar | Submission Dicoding Studeng Perfomance Analysis
     </p>
     """,
     unsafe_allow_html=True
