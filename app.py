@@ -5,7 +5,14 @@ import matplotlib.ticker as mtick
 import joblib
 
 st.set_page_config(page_title="Portofolio", layout="wide")
+
+# ========================
+# LOAD DATA
+# ========================
 df = pd.read_csv("data/data_mapping.csv")
+model = joblib.load("model/rf_model.pkl")
+scaler = joblib.load("model/scaler.pkl")   
+
 
 data_column = {
     "Course": "Study Program",
@@ -16,8 +23,29 @@ data_column = {
 }
 colors = ["#ff6b6b", "#ffd166", "#06d6a0"]
 
+course_name_to_code = {
+    "Advertising and Marketing Management": 9670,
+    "Agronomy": 9003,
+    "Animation and Multimedia Design": 171,
+    "Basic Education": 9853,
+    "Biofuel Production Technologies": 33,
+    "Communication Design": 9070,
+    "Equinculture": 9130,
+    "Informatics Engineering": 9119,
+    "Journalism and Communication": 9773,
+    "Management": 9147,
+    "Management (evening)": 9991,
+    "Nursing": 9500,
+    "Oral Hygiene": 9556,
+    "Social Service": 9238,
+    "Social Service (evening)": 8014,
+    "Tourism": 9254,
+    "Veterinary Nursing": 9085
+}
+
+
 # =========================
-# FUNCTION
+# FUNCTION LIST
 # =========================
 def pivot(df, column):
     return df.groupby([column, 'Status']).size().unstack(fill_value=0).sort_values(by='Dropout', ascending=True)
@@ -48,12 +76,12 @@ def plot_percentage(df, column, label):
 
     return fig
 
-st.title("📊 Jaya-Jaya Institute Student Academic Analysis")
+st.title("🎓 Jaya-Jaya Institute Student Academic Analysis")
 
 # =========================
 # TABS
 # =========================
-tab1, tab2 = st.tabs(["📈 Dashboard", "🤖 Prediksi"])
+tab1, tab2, tab3 = st.tabs(["📈 Dashboard", "🤖 Prediksi", "🗂️ Raw Data"])
 
 
 # =========================
@@ -73,7 +101,7 @@ with tab1:
     col_left, col_right = st.columns([1, 1])
 
     # =========================
-    # KIRI: METRICS
+    # METRICS
     # =========================
     with col_left:
         st.markdown("### 📊 Summary")
@@ -87,7 +115,7 @@ with tab1:
         c3.metric("Graduate", int(graduate))
 
     # =========================
-    # KANAN: PIE CHART
+    # PIE CHART
     # =========================
     with col_right:
         fig, ax = plt.subplots(figsize=(3, 2)) 
@@ -121,8 +149,9 @@ with tab1:
 
         st.pyplot(fig)
 
-
-
+# =========================
+# ANALIZE
+# =========================
 
     selected_column = st.selectbox(
     "Select Variable",
@@ -131,11 +160,12 @@ with tab1:
 )
     label = data_column[selected_column]
 
+    # ========================
+    # LAYOUT
+    # ========================
     col_pivot, col_pivot_percentage = st.columns(2)
     col_detail, col_detail_percentage = st.columns(2)
-
-    
- 
+   
     with col_pivot:
         fig = plot_pivot(df,selected_column, label)
         st.pyplot(fig)
@@ -185,9 +215,8 @@ with tab1:
     sem2_dist = pd.crosstab(df['Sem2_Quartile'], df['Status'], normalize='index') * 100
 
     # ========================
-    # LAYOUT 2 KOLOM
+    # LAYOUT
     # ========================
-
     st.subheader("Academic Performance and Student Status")
     col_sem1, col_sem2 = st.columns(2)
 
@@ -200,12 +229,10 @@ with tab1:
         "Graduate": "#06d6a0"
     }
 
-
     with col_sem1:
         st.subheader("📘 Semester 1")
 
         fig1, ax1 = plt.subplots(figsize=(5, 4))
-
         for col in sem1_dist.columns:
             ax1.plot(
                 sem1_dist.index,
@@ -255,7 +282,9 @@ with tab1:
     sem1_range = df.groupby('Sem1_Quartile')['Curricular_units_1st_sem_grade'].agg(['min', 'max'])
     sem2_range = df.groupby('Sem2_Quartile')['Curricular_units_2nd_sem_grade'].agg(['min', 'max'])
 
-
+    # ========================
+    # LAYOUT
+    # ========================
     col_value_sem1, col_value_sem2 = st.columns(2)
     # ---------- Value Semester 1 ----------
     with col_value_sem1:
@@ -271,7 +300,7 @@ with tab1:
         values='Curricular_units_1st_sem_grade',
         index='Sem1_Quartile',
         columns='Status',
-        aggfunc='count'   # ✅ bukan list
+        aggfunc='count'
     )
 
     sem2_group = df.pivot_table(
@@ -295,25 +324,125 @@ with tab1:
 # TAB 2: Predict
 # =========================
 with tab2:
-    st.header("Prediksi Model")
+    # ========================
+    # MAPPING
+    # ========================
+    binary_map = {
+        1: "Yes",
+        0: "No"
+    }
 
-    # model = joblib.load("model.pkl")
+    target_label_map = {
+        0: "Dropout",
+        1: "Enrolled",
+        2: "Graduate"
+    }
 
-    st.write("Input Data:")
+    # ========================
+    # UI
+    # ========================
 
-    age = st.number_input("inputt", 17, 60)
+    # ========================
+    # INPUT FORM (ONLY FEATURES)
+    # ========================
+    st.subheader("🎓 Academic")
+    col_left, col_right = st.columns(2)
 
-    if st.button("Prediksi"):
-        input_data = pd.DataFrame({
-            'age': [age]
+    with col_left:
+        st.write("📊 Semester 1")
+        cu_1st_enrolled = st.number_input("Enrolled (Sem 1)", 0, 30)
+        cu_1st_approved = st.number_input("Approved (Sem 1)", 0, 30)
+        cu_1st_grade = st.number_input("Grade (Sem 1)", 0.0, 20.0)
+
+    with col_right:
+        st.write("📊 Semester 2")
+        cu_2nd_enrolled = st.number_input("Enrolled (Sem 2)", 0, 30)
+        cu_2nd_approved = st.number_input("Approved (Sem 2)", 0, 30)
+        cu_2nd_grade = st.number_input("Grade (Sem 2)", 0.0, 20.0)
+
+    st.subheader("🎓 Course")
+    selected_course = st.selectbox("🎓 Course", list(course_name_to_code.keys()))
+    course_code = course_name_to_code[selected_course]
+
+    st.subheader("💰 Financial")
+    tuition = st.selectbox("Tuition Up To Date", list(binary_map.values()))
+    debtor = st.selectbox("Debtor", list(binary_map.values()))
+
+    # ========================
+    # CONVERT INPUT → NUMERIC
+    # ========================
+    def reverse_map(mapping, value):
+        return list(mapping.keys())[list(mapping.values()).index(value)]
+
+    input_data = {
+        'Curricular_units_2nd_sem_enrolled': cu_2nd_enrolled,
+        'Curricular_units_2nd_sem_approved': cu_2nd_approved,
+        'Curricular_units_2nd_sem_grade': cu_2nd_grade,
+
+        'Curricular_units_1st_sem_enrolled': cu_1st_enrolled,
+        'Curricular_units_1st_sem_approved': cu_1st_approved,
+        'Curricular_units_1st_sem_grade': cu_1st_grade,
+
+        'Course': course_code,
+        'Tuition_fees_up_to_date': reverse_map(binary_map, tuition),
+        'Debtor': reverse_map(binary_map, debtor)
+    }
+
+    df_input = pd.DataFrame([input_data])
+
+    # ========================
+    # PASTIKAN URUTAN FITUR SAMA
+    # ========================
+    feature_order = [
+        'Curricular_units_2nd_sem_enrolled',
+        'Curricular_units_2nd_sem_approved',
+        'Curricular_units_2nd_sem_grade',
+        'Curricular_units_1st_sem_enrolled',
+        'Curricular_units_1st_sem_approved',
+        'Curricular_units_1st_sem_grade',
+        'Course',
+        'Tuition_fees_up_to_date',
+        'Debtor'
+    ]
+
+    df_input = df_input[feature_order]
+
+    # ========================
+    # PREDICT
+    # ========================
+    if st.button("🔮 Predict"):
+        df_scaled = scaler.transform(df_input)
+        
+        pred = model.predict(df_scaled)[0]
+        proba = model.predict_proba(df_scaled)[0]
+
+        result = target_label_map[pred]
+
+        # warna
+        if result == "Dropout":
+            color = "red"
+        elif result == "Enrolled":
+            color = "orange"
+        else: 
+            color = "green"
+
+        st.markdown(f"<h3 style='color:{color}'>🎯 Predict Result: {result}</h3>", unsafe_allow_html=True)
+
+        # tampilkan probability
+        st.write("Probability")
+        st.write({
+            "Dropout": round(proba[0], 2),
+            "Enrolled": round(proba[1], 2),
+            "Graduate": round(proba[2], 2)
         })
 
-        # pred = model.predict(input_data)
 
-        # st.success(f"Hasil Prediksi: {pred[0]}")
-        st.success(f"Hasil Prediksi: ???")
-
-
+# =========================
+# TAB 3: Raw Data
+# =========================
+with tab3:
+    st.header("Raw Data")
+    st.dataframe(df, use_container_width=True)
 
 st.markdown(
     """
