@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import joblib
 
-st.set_page_config(page_title="Dashboard", layout="wide")
+st.set_page_config(page_title="Portofolio", layout="wide")
 df = pd.read_csv("data/data_mapping.csv")
 
 data_column = {
@@ -48,7 +48,7 @@ def plot_percentage(df, column, label):
 
     return fig
 
-st.title("📊 New Dashboard")
+st.title("📊 Jaya-Jaya Institute Student Academic Analysis")
 
 # =========================
 # TABS
@@ -163,6 +163,133 @@ with tab1:
         st.dataframe(summary_pct.round(1), use_container_width=True)
 
 
+    # ========================
+    # QUARTILE
+    # ========================
+    df['Sem1_Quartile'] = pd.qcut(
+        df['Curricular_units_1st_sem_grade'],
+        q=4,
+        labels=['Q1', 'Q2', 'Q3', 'Q4']
+    )
+
+    df['Sem2_Quartile'] = pd.qcut(
+        df['Curricular_units_2nd_sem_grade'],
+        q=4,
+        labels=['Q1', 'Q2', 'Q3', 'Q4']
+    )
+
+    # ========================
+    # DISTRIBUSI (%)
+    # ========================
+    sem1_dist = pd.crosstab(df['Sem1_Quartile'], df['Status'], normalize='index') * 100
+    sem2_dist = pd.crosstab(df['Sem2_Quartile'], df['Status'], normalize='index') * 100
+
+    # ========================
+    # LAYOUT 2 KOLOM
+    # ========================
+
+    st.subheader("Academic Performance and Student Status")
+    col_sem1, col_sem2 = st.columns(2)
+
+    # ========================
+    # SEMESTER 1
+    # ========================
+    colors = {
+        "Dropout": "#ff6b6b",
+        "Enrolled": "#ffd166",
+        "Graduate": "#06d6a0"
+    }
+
+
+    with col_sem1:
+        st.subheader("📘 Semester 1")
+
+        fig1, ax1 = plt.subplots(figsize=(5, 4))
+
+        for col in sem1_dist.columns:
+            ax1.plot(
+                sem1_dist.index,
+                sem1_dist[col],
+                marker='o',
+                label=col,
+                color=colors.get(col, "#333333")
+            )
+
+            for x, y in zip(sem1_dist.index, sem1_dist[col]):
+                ax1.text(x, y, f'{y:.1f}%', ha='center', fontsize=7)
+
+        ax1.set_xlabel('Quartile')
+        ax1.set_ylabel('Persentase (%)')
+        ax1.legend()
+        ax1.grid(True, alpha=0.3)
+
+        st.pyplot(fig1)
+
+    # ========================
+    # SEMESTER 2 
+    # ========================
+    with col_sem2:
+        st.subheader("📗 Semester 2")
+
+        fig2, ax2 = plt.subplots(figsize=(5, 4))
+
+        for col in sem2_dist.columns:
+            ax2.plot(
+                sem2_dist.index,
+                sem2_dist[col],
+                marker='o',
+                label=col,
+                color=colors.get(col, "#333333")
+            )
+
+            for x, y in zip(sem2_dist.index, sem2_dist[col]):
+                ax2.text(x, y, f'{y:.1f}%', ha='center', fontsize=7)
+
+        ax2.set_xlabel('Quartile')
+        ax2.set_ylabel('Persentase (%)')
+        ax2.legend()
+        ax2.grid(True, alpha=0.3)
+
+        st.pyplot(fig2)
+
+    sem1_range = df.groupby('Sem1_Quartile')['Curricular_units_1st_sem_grade'].agg(['min', 'max'])
+    sem2_range = df.groupby('Sem2_Quartile')['Curricular_units_2nd_sem_grade'].agg(['min', 'max'])
+
+
+    col_value_sem1, col_value_sem2 = st.columns(2)
+    # ---------- Value Semester 1 ----------
+    with col_value_sem1:
+        st.write("Grade Quartile Value")
+        st.dataframe(sem1_range, use_container_width=True)
+
+    # ---------- Value Semester 2 ----------
+    with col_value_sem2:
+        st.write("Grade Quartile Value")
+        st.dataframe(sem2_range, use_container_width=True)
+
+    sem1_group = df.pivot_table(
+        values='Curricular_units_1st_sem_grade',
+        index='Sem1_Quartile',
+        columns='Status',
+        aggfunc='count'   # ✅ bukan list
+    )
+
+    sem2_group = df.pivot_table(
+        values='Curricular_units_2nd_sem_grade',
+        index='Sem2_Quartile',
+        columns='Status',
+        aggfunc='count'
+    )
+    col_group_sem1, col_group_sem2 = st.columns(2)
+
+    with col_group_sem1:
+        st.write("Quartile Count")
+        st.dataframe(sem1_group, use_container_width=True)
+
+    with col_group_sem2:
+        st.write("Quartile Count")    
+        st.dataframe(sem2_group, use_container_width=True)
+
 
 # =========================
 # TAB 2: Predict
@@ -185,3 +312,15 @@ with tab2:
 
         # st.success(f"Hasil Prediksi: {pred[0]}")
         st.success(f"Hasil Prediksi: ???")
+
+
+
+st.markdown(
+    """
+    <hr>
+    <p style='text-align:center; color:gray; font-size:16px;'>
+        © 2026 Fakhrul_Akbar | Submission Dicoding Student Perfomance Analysis
+    </p>
+    """,
+    unsafe_allow_html=True
+)
