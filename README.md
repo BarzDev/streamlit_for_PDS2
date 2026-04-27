@@ -46,17 +46,20 @@ pip install -r requirements.txt
 
 Dashboard ini menampilkan gambaran umum (overview) data akademik mahasiswa berdasarkan aktivitas pada Semester 1 dan Semester 2. Pada setiap semester, data dibagi menjadi tiga kategori utama, yaitu jumlah mahasiswa yang melakukan enrollment, mahasiswa dengan evaluasi (with evaluation), serta mahasiswa tanpa evaluasi (without evaluation). Melalui visualisasi ini, pengguna dapat dengan mudah membandingkan tingkat partisipasi dan evaluasi antar semester, melihat proporsi mahasiswa yang aktif dinilai maupun yang belum dievaluasi, serta mengidentifikasi pola atau potensi permasalahan dalam proses pembelajaran. Dashboard ini dirancang untuk memberikan insight yang cepat dan informatif guna mendukung pengambilan keputusan berbasis data di bidang akademik.
 
-Link : [Dashboard](https://lookerstudio.google.com/reporting/586d3422-3677-45f0-8613-52d040561752/page/6iYuF)
+<!-- Link : [Dashboard](https://lookerstudio.google.com/reporting/586d3422-3677-45f0-8613-52d040561752/page/6iYuF) -->
 
 ## Menjalankan Sistem Machine Learning
 
 Jelaskan cara menjalankan protoype sistem machine learning yang telah dibuat. Selain itu, sertakan juga link untuk mengakses prototype tersebut.
 
 Menjalankan Aplikasi
-``conda activate main-ds
-streamlit run app.py`
 
-Link : [Streamlit](https://lookerstudio.google.com/reporting/586d3422-3677-45f0-8613-52d040561752/page/6iYuF)
+```
+conda activate main-ds
+streamlit run app.py`
+```
+
+<!-- Link : [Streamlit](https://lookerstudio.google.com/reporting/586d3422-3677-45f0-8613-52d040561752/page/6iYuF) -->
 
 ## Conclusion
 

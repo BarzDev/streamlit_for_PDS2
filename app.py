@@ -11,7 +11,8 @@ data_column = {
     "Course": "Study Program",
     "Daytime_evening_attendance": "Study Schedule",
     "Marital_status": "Marital Status",
-    "Application_mode": "Admission Path"
+    "Tuition_fees_up_to_date": "Tuition Payment Status",
+    "Debtor": "Outstanding Debt Status"
 }
 colors = ["#ff6b6b", "#ffd166", "#06d6a0"]
 
