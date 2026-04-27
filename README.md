@@ -46,7 +46,7 @@ pip install -r requirements.txt
 
 Dashboard ini menampilkan gambaran umum (overview) data akademik mahasiswa berdasarkan aktivitas pada Semester 1 dan Semester 2. Pada setiap semester, data dibagi menjadi tiga kategori utama, yaitu jumlah mahasiswa yang melakukan enrollment, mahasiswa dengan evaluasi (with evaluation), serta mahasiswa tanpa evaluasi (without evaluation). Melalui visualisasi ini, pengguna dapat dengan mudah membandingkan tingkat partisipasi dan evaluasi antar semester, melihat proporsi mahasiswa yang aktif dinilai maupun yang belum dievaluasi, serta mengidentifikasi pola atau potensi permasalahan dalam proses pembelajaran. Dashboard ini dirancang untuk memberikan insight yang cepat dan informatif guna mendukung pengambilan keputusan berbasis data di bidang akademik.
 
-<!-- Link : [Dashboard](https://lookerstudio.google.com/reporting/586d3422-3677-45f0-8613-52d040561752/page/6iYuF) -->
+Link : [Dashboard](https://barzdev-streamlit-for-pds2-app-ksemsd.streamlit.app)
 
 ## Menjalankan Sistem Machine Learning
 
@@ -59,9 +59,9 @@ conda activate main-ds
 streamlit run app.py`
 ```
 
-<!-- Link : [Streamlit](https://lookerstudio.google.com/reporting/586d3422-3677-45f0-8613-52d040561752/page/6iYuF) -->
+Link : [Streamlit](https://barzdev-streamlit-for-pds2-app-ksemsd.streamlit.app)
 
-## Conclusion
+<!-- ## Conclusion
 
 Berdasarkan hasil analisis korelasi, faktor **akademik** menjadi penentu utama dalam menentukan status mahasiswa. Variabel seperti jumlah mata kuliah yang lulus (_approved_) dan nilai (_grade_) pada Semester 1 dan Semester 2 memiliki pengaruh paling kuat, yang menunjukkan bahwa performa akademik yang baik secara signifikan menurunkan risiko _dropout_. Selain itu, faktor **finansial** seperti status pembayaran kuliah yang lancar (_tuition up to date_) dan kepemilikan beasiswa (_scholarship holder_) juga berkontribusi positif terhadap keberlangsungan studi, sementara kondisi seperti memiliki tunggakan (_debtor_) justru meningkatkan risiko _dropout_. Faktor aktivitas dan _background_ seperti jumlah mata kuliah yang diambil serta nilai masuk juga berpengaruh, namun relatif lebih kecil.
 
@@ -72,4 +72,4 @@ Berdasarkan hasil analisis korelasi, faktor **akademik** menjadi penentu utama d
 - Dukungan finansial (beasiswa / cicilan)
 - Tingkatkan keterlibatan (aktif kuliah & evaluasi)
 - Pendekatan personal untuk mahasiswa berisiko tinggi
-- Gunakan dashboard & model prediksi untuk tracking
+- Gunakan dashboard & model prediksi untuk tracking -->
